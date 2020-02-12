@@ -1,12 +1,13 @@
+
 #include <iostream>
 #include <string>
+
 using namespace std;
 
 class list {
 public:
 	class node {
-	private:
-		friend list;
+	public:
 		int data;
 		node* next;
 		node* prev;
@@ -48,7 +49,7 @@ public:
 	int nodesize();
 	int getIdx(int index);
 	void circulate(int index);
-	bool isCircul();
+	bool isLoop();
 	string sort();
 	string sorted();
 	string disp();
@@ -60,32 +61,49 @@ private:
 	node* cur = nullptr;
 	node* pre = nullptr;
 	int nodecnt{ 0 };
+	bool loop = false;
+	int loopIdx = 0;
 };
 
 void list::addFirst(int datum) {
 	node* newlist = new node(datum);
+	if (nodecnt == 0) {
+		head->next = newlist;
+		tail = newlist;
+		tail->prev = head;
+		nodecnt++;
+		return;
+	}
 	cur = head->next;
 	cur->prev = newlist;
 	head->next = newlist;
 	newlist->next = cur;
 	newlist->prev = head;
+	if (loop == true && loopIdx == 0) {
+		cur = head;
+		for (int i = 0; i < loopIdx; i++)
+			cur = cur->next;
+		tail->next = cur;
+		head->prev = tail; // 루프의 순환 인덱스가 헤드이면 prev를 테일과 연결
+		loopIdx++;
+	}
 	nodecnt++;
 }
 void list::addLast(int datum) {
 	node* newlist = new node(datum);
 	if (nodecnt == 0) {
 		addFirst(datum);
-		nodecnt++;
 		return;
 	}
 	tail->next = newlist;
 	newlist->prev = tail;
 	tail = newlist;
+
 	nodecnt++;
 }
 
 void list::addIdx(int index, int datum) {
-	if (index > nodecnt) {
+	if (index > nodecnt&& loop == false) { // 루프가 있으면 오버 인덱스를 가능으로 만듦
 		cout << "out of index\n\n";
 		return;
 	}
@@ -98,10 +116,15 @@ void list::addIdx(int index, int datum) {
 	for (int i = 0; i < index; i++)
 		pre = pre->next; // 인덱스 앞까지 서치
 	cur = pre->next;
+	if (pre == tail) { // 만약 순환구조의 오버 인덱스가 테일의 위치라면 테일을 연결
+		addLast(datum);
+		return;
+	}
 	pre->next = newlist;
 	cur->prev = newlist;
 	newlist->next = cur;
 	newlist->prev = pre;
+	if (loop == true && loopIdx <= index) loopIdx++;
 	nodecnt++;
 }
 
@@ -122,6 +145,12 @@ int list::removeFirst() {
 	head->next = cur;
 	cur->prev = head;
 	nodecnt--;
+	if (nodecnt == 0) loop = false;
+	if (loop && loopIdx == 0) { // 순환 루프의 회기점이 헤드이면 루프를 해제
+		tail->next = head;
+		loop = false;
+	}
+	else loopIdx--;
 	return tmp;
 }
 
@@ -140,6 +169,7 @@ int list::removeLast() {
 	tail = pre;
 	tail->next = nullptr;
 	nodecnt--;
+	if (nodecnt == 0) loop = false;
 	return tmp;
 }
 
@@ -185,11 +215,13 @@ int list::getIdx(int index) {
 void list::circulate(int index) {
 	cur = head;
 	for (int i = 0; i <= index; i++)
-		cur = cur->next;
+		cur = cur->next; // 인덱스 앞까지 이동
 	tail->next = cur;
+	loopIdx = index; // 인덱스의 위치를 항상 기억
+	loop = true;
 }
 
-bool list::isCircul() {
+bool list::isLoop() {
 	node* p = head;
 	node* q = head;
 	do {
@@ -201,12 +233,61 @@ bool list::isCircul() {
 }
 
 string list::sort() {
-	string msg;
+	int i, j;
+	int* arr = new int[nodecnt] {0};
+	string msg = "sort list: [";
+	cur = head;
+	for (int i = 0; i <= nodecnt; i++) {
+		cur = cur->next;
+		if (i == nodecnt) continue;
+		arr[i] = cur->getData();
+	}
+	for (i = 0; i < nodecnt; i++) {
+		for (j = 0; j < nodecnt; j++) {
+			if (arr[i] < arr[j]) {
+				int tmp = arr[i];
+				arr[i] = arr[j];
+				arr[j] = tmp;
+			}
+		}
+	}
+	for (i = 0; i < nodecnt; i++) {
+		if (i != 0) msg += ", ";
+		msg += to_string(arr[i]);
+	}
+	msg += " ]\n\n";
+	delete[] arr;
 	return msg;
 }
 
 string list::sorted() {
-	string msg;
+	int i, j;
+	int* arr = new int[nodecnt] {0};
+	string msg = "sort list: [";
+	cur = head;
+	for (int i = 0; i <= nodecnt; i++) {
+		cur = cur->next;
+		if (i == nodecnt) continue;
+		arr[i] = cur->getData();
+	}
+	for (i = 0; i < nodecnt; i++) {
+		for (j = 0; j < nodecnt; j++) {
+			if (arr[i] < arr[j]) {
+				int tmp = arr[i];
+				arr[i] = arr[j];
+				arr[j] = tmp;
+			}
+		}
+	}
+	cur = head;
+	for (i = 0; i < nodecnt; i++) {
+		if (i != 0) msg += ", ";
+		cur = cur->next;
+		msg += to_string(arr[i]);
+		cur->putData(arr[i]);
+	}
+	msg += " ]\n\n";
+	delete[] arr;
 	return msg;
 }
 
@@ -246,13 +327,12 @@ string list::dispRev() {
 
 int main() {
 	list tt(1);
-	tt.addFirst(3);
-	tt.addLast(2);
-
-	cout << tt.disp();
-	tt.removeIdx(2);
-	//tt.removeFirst();
-	//tt.removeLast();
+	tt.addLast(9);
+	tt.addLast(4);
+	tt.addLast(6);
+	tt.addLast(55);
+	tt.addLast(3);
+	cout << tt.sorted();
 	cout << tt.disp();
 	cout << tt.dispRev();
 }
