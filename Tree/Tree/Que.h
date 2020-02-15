@@ -3,10 +3,11 @@
 #include <string>
 using namespace std;
 
+template <class T>
 class Que {
 public:
-	void enqueue(int);
-	int dequeue();
+	void enqueue(T);
+	T dequeue();
 	void disp();
 	~Que();
 private:
@@ -15,7 +16,7 @@ private:
 		int data;
 		node* next;
 		node* prev;
-		node(int n) : data(n) {
+		node(T datum) : data(datum) {
 			prev = next = nullptr;
 		};
 	};
@@ -24,32 +25,41 @@ private:
 	node* cur = nullptr; // current
 	node* pre = nullptr; // prev
 	int ncnt = 0; // node counter
+	T getData(node*);
 };
 
-void Que::enqueue(int n) {
+template <class T>
+T Que<T>::getData(node* Node) {
+	return Node->data;
+}
+
+template <class T>
+void Que<T>::enqueue(T datum) {
 	if (!ncnt) {
-		head = new node(n);
+		head = new node(datum);
 		tail = head;
 	}
 	else if (ncnt == 1) {
-		tail = new node(n);
+		tail = new node(datum);
 		head->next = tail;
 		tail->prev = head;
 	}
 	else {
 		cur = tail;
-		tail = new node(n);
+		tail = new node(datum);
 		cur->next = tail;
 		tail->prev = cur;
 	}
 	ncnt++;
 }
-int Que::dequeue() {
+
+template <class T>
+T Que<T>::dequeue() {
 	if (ncnt < 1) {
 		cout << "Que is empty";
 		return -1;
 	}
-	int tmp = head->data;
+	T tmp = getData(head);
 	if (ncnt == 1) {
 		delete head;
 	}
@@ -66,31 +76,31 @@ int Que::dequeue() {
 	return tmp;
 }
 
-void Que::disp() {
-	string msg;
+template <class T>
+void Que<T>::disp() {
 	if (ncnt < 1) {
-		msg = "data does not exist\n\n";
+		cout << "data does not exist\n\n";
 	}
 	else {
-		msg = "list: [ ";
+		cout << "list: [ ";
 		if (head == tail) {
-			msg += to_string(head->data);
+			cout << getData(head);
 		}
 
 		else {
 			cur = head;
 			for (int i = 0; cur; i++) {
-				msg += to_string(cur->data);
-				if (i < ncnt - 1) msg += ", ";
+				cout << getData(cur);
+				if (i < ncnt - 1) cout << ", ";
 				cur = cur->next;
 			}
 		}
-		msg += " ]\n\n";
+		cout << " ]\n\n";
 	}
-	cout << msg;
 }
 
-Que::~Que() {
+template <class T>
+Que<T>::~Que() {
 	if (ncnt == 1) {
 		delete head;
 		return;
