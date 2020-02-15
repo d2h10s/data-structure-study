@@ -8,12 +8,13 @@ class Que {
 public:
 	void enqueue(T);
 	T dequeue();
+	int size() const;
 	void disp();
 	~Que();
 private:
 	class node {
 	public:
-		int data;
+		T data;
 		node* next;
 		node* prev;
 		node(T datum) : data(datum) {
@@ -25,11 +26,11 @@ private:
 	node* cur = nullptr; // current
 	node* pre = nullptr; // prev
 	int ncnt = 0; // node counter
-	T getData(node*);
+	T getData(node*) const;
 };
 
 template <class T>
-T Que<T>::getData(node* Node) {
+T Que<T>::getData(node* Node) const{
 	return Node->data;
 }
 
@@ -55,12 +56,11 @@ void Que<T>::enqueue(T datum) {
 
 template <class T>
 T Que<T>::dequeue() {
+	T tmp = getData(head);
 	if (ncnt < 1) {
 		cout << "Que is empty";
-		return -1;
 	}
-	T tmp = getData(head);
-	if (ncnt == 1) {
+	else if (ncnt == 1) {
 		delete head;
 	}
 	else if (ncnt == 2) {
@@ -72,10 +72,14 @@ T Que<T>::dequeue() {
 		delete head;
 		head = cur;
 	}
-	ncnt--;
+	if (ncnt) ncnt--;
 	return tmp;
 }
 
+template <class T>
+int Que<T>::size() const{
+	return ncnt;
+}
 template <class T>
 void Que<T>::disp() {
 	if (ncnt < 1) {

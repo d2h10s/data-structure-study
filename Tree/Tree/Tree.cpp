@@ -1,13 +1,15 @@
 #include <iostream>
-
+#include "Que.h"
 
 class Tree {
 public:
-	Tree(int);
+	Tree();
+	void traversal();
 	void ent(int);
-	void preDisp();
-	void inDisp();
-	void postDisp();
+	void preOrder();
+	void inOrder();
+	void postOrder();
+
 	~Tree();
 private:
 	class node {
@@ -19,46 +21,67 @@ private:
 		node* left;
 		node* right;
 	};
-	int recur(int, int, int);
 	node* root;
 	node* cur;
-	node* par;
-	node* sib;
-	int ncnt{ 1 };
+	Que<node*> el;
+	int ncnt;
+	int getData(node* Node) const{ return cur->data; };
 };
 
-Tree::Tree(int n){
-	root = new node(n);
+Tree::Tree() : cur(nullptr), root(nullptr), ncnt(0) {}
+
+
+void Tree::traversal() {
+	int datum;
+	cout << "input Root:  ";
+	cin >> datum;
+	root = new node(datum);
+	el.enqueue(root);
+	while (1) {
+		cur = el.dequeue();
+		cout << "input Left:  ";
+		cin >> datum;
+		cur->left = new node(datum);
+		el.enqueue(cur->left);
+		if (datum == -1) break;
+		cout << "input Right: ";
+		cin >> datum;
+		cur->right = new node(datum);
+		el.enqueue(cur->right);
+		if (datum == -1) break;
+	}
 }
-
-int Tree::recur(int n, int lev = 0, int dir = 0) {
-	if (!cur->left) return 0;
-	else if (!cur->right) return 1;
-	if (dir == 0) cur = cur->left;
-	else cur = cur->right;
-	lev++;
-	recur(n, lev, 0);
-	recur(n, lev, 1);
-	lev--;
-}
-
-
-void Tree::ent(int n) {
-	cur = root;
-	if (!recur(n, 0, 0)) cur->left = new node(n);
-	else cur->right = new node(n);
+void Tree::ent(int datum) {
+	if (!root) root = new node(datum);
+	else {
+		while (el.size()) el.dequeue();
+		el.enqueue(root);
+		while (1) {
+			cur = el.dequeue();
+			if (cur->left) el.enqueue(cur->left);
+			if (cur->right) el.enqueue(cur->right);
+			if (!cur->left) {
+				cur->left = new node(datum);
+				break;
+			}
+			else if (!cur->right) {
+				cur->right = new node(datum);
+				break;
+			}
+		}
+	}
 	ncnt++;
 };
 
-void Tree::preDisp() {
+void Tree::preOrder() {
 	using namespace std;
 }
 
-void Tree::inDisp() {
+void Tree::inOrder() {
 	using namespace std;
 }
 
-void Tree::postDisp() {
+void Tree::postOrder() {
 	using namespace std;
 }
 
@@ -67,10 +90,8 @@ Tree::~Tree() {
 }
 
 int main() {
-	Tree tt(1);
-	tt.ent(2);
-	tt.ent(3);
-	tt.ent(4);
-	tt.ent(5);
-	tt.ent(6);
+	Tree tt;
+	tt.traversal();
+	for(int i = 1; i<10; i++)
+		tt.ent(i);
 }
