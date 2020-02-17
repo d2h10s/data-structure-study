@@ -8,6 +8,7 @@ class Stack {
 public:
 	void push(T);
 	T pop();
+	int size() const;
 	void disp();
 	~Stack();
 private:
@@ -68,6 +69,11 @@ T Stack<T>::pop() {
 	}
 	if(ncnt) ncnt--;
 	return tmp;
+}
+
+template <class T>
+int Stack<T>::size() const{
+	return ncnt;
 }
 
 template <class T>
