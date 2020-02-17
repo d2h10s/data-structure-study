@@ -8,6 +8,7 @@ class Que {
 public:
 	void enqueue(T);
 	T dequeue();
+	void clear();
 	int size() const;
 	void disp();
 	~Que();
@@ -72,8 +73,14 @@ T Que<T>::dequeue() {
 		delete head;
 		head = cur;
 	}
-	if (ncnt) ncnt--;
+	if (ncnt > 0) ncnt--;
 	return tmp;
+}
+
+template <class T>
+void Que<T>::clear() {
+	for (int i = 0; ncnt; i++)
+		dequeue();
 }
 
 template <class T>

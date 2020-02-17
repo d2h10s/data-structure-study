@@ -8,6 +8,7 @@ class Stack {
 public:
 	void push(T);
 	T pop();
+	void clear();
 	int size() const;
 	void disp();
 	~Stack();
@@ -71,6 +72,11 @@ T Stack<T>::pop() {
 	return tmp;
 }
 
+template <class T>
+void Stack<T>::clear() {
+	for (int i = 0; ncnt; i++)
+		pop();
+}
 template <class T>
 int Stack<T>::size() const{
 	return ncnt;

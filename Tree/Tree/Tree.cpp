@@ -24,7 +24,8 @@ private:
 	};
 	node* root;
 	node* cur;
-	Que<node*> el;
+	Que<node*> qel;
+	Stack<node*> sel;
 	int ncnt;
 	int getData(node* Node) const{ return cur->data; };
 };
@@ -37,30 +38,30 @@ void Tree::traversal() {
 	cout << "input Root:  ";
 	cin >> datum;
 	root = new node(datum);
-	el.enqueue(root);
+	qel.enqueue(root);
 	while (1) {
-		cur = el.dequeue();
+		cur = qel.dequeue();
 		cout << "input Left:  ";
 		cin >> datum;
 		cur->left = new node(datum);
 		if (datum == -1) break;
-		el.enqueue(cur->left);
+		qel.enqueue(cur->left);
 		cout << "input Right: ";
 		cin >> datum;
 		if (datum == -1) break;
 		cur->right = new node(datum);
-		el.enqueue(cur->right);
+		qel.enqueue(cur->right);
 	}
 }
 void Tree::ent(int datum) {
 	if (!root) root = new node(datum);
 	else {
-		while (el.size()) el.dequeue();
-		el.enqueue(root);
+		qel.clear();
+		qel.enqueue(root);
 		while (1) {
-			cur = el.dequeue();
-			if (cur->left) el.enqueue(cur->left);
-			if (cur->right) el.enqueue(cur->right);
+			cur = qel.dequeue();
+			if (cur->left) qel.enqueue(cur->left);
+			if (cur->right) qel.enqueue(cur->right);
 			if (!cur->left) {
 				cur->left = new node(datum);
 				break;
@@ -76,6 +77,13 @@ void Tree::ent(int datum) {
 
 void Tree::preOrder() {
 	using namespace std;
+	while (sel.size()) sel.pop();
+	cur = root;
+	sel.push(root);
+	while (sel.size()) {
+		cout << getData(cur);
+
+	}
 }
 
 void Tree::inOrder() {
@@ -92,7 +100,6 @@ Tree::~Tree() {
 
 int main() {
 	Tree tt;
-	tt.traversal();
-	for(int i = 1; i<10; i++)
+	for(int i = 1; i <= 15; i++)
 		tt.ent(i);
 }
