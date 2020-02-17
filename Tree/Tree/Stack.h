@@ -13,7 +13,7 @@ public:
 private:
 	class node {
 	public:
-		int data;
+		T data;
 		node* next;
 		node* prev;
 		node(T datum) : data(datum) {
@@ -49,12 +49,11 @@ void Stack<T>::push(T datum) {
 
 template <class T>
 T Stack<T>::pop() {
+	T tmp = tail->data;
 	if (ncnt < 1) {
 		cout << "Que is empty";
-		return -1;
 	}
-	T tmp = tail->data;
-	if (ncnt == 1) {
+	else if (ncnt == 1) {
 		delete tail;
 	}
 	else if (ncnt == 2) {
@@ -67,7 +66,7 @@ T Stack<T>::pop() {
 		tail = cur;
 		tail->next = nullptr;
 	}
-	ncnt--;
+	if(ncnt) ncnt--;
 	return tmp;
 }
 
@@ -81,12 +80,11 @@ void Stack<T>::disp() {
 		if (head == tail) {
 			cout << head->data;
 		}
-
 		else {
 			cur = head;
 			for (int i = 0; cur; i++) {
 				cout << cur->data;
-				if (i < ncnt - 1) cout << += ", ";
+				if (i < ncnt - 1) cout << ", ";
 				cur = cur->next;
 			}
 		}

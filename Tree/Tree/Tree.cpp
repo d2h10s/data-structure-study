@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Que.h"
+#include "Stack.h"
 
 class Tree {
 public:
@@ -42,13 +43,13 @@ void Tree::traversal() {
 		cout << "input Left:  ";
 		cin >> datum;
 		cur->left = new node(datum);
-		el.enqueue(cur->left);
 		if (datum == -1) break;
+		el.enqueue(cur->left);
 		cout << "input Right: ";
 		cin >> datum;
+		if (datum == -1) break;
 		cur->right = new node(datum);
 		el.enqueue(cur->right);
-		if (datum == -1) break;
 	}
 }
 void Tree::ent(int datum) {
