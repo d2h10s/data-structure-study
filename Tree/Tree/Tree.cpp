@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Que.h"
 #include "Stack.h"
+using namespace std;
 
 class Tree {
 public:
@@ -10,6 +11,7 @@ public:
 	void preOrder();
 	void inOrder();
 	void postOrder();
+	void levelOrder();
 
 	~Tree();
 private:
@@ -76,30 +78,57 @@ void Tree::ent(int datum) {
 };
 
 void Tree::preOrder() {
-	using namespace std;
-	while (sel.size()) sel.pop();
-	cur = root;
-	sel.push(root);
+	sel.clear();
+	sel.push(cur = root);
+	cout << "preOrder: ";
 	while (sel.size()) {
-		cout << getData(cur);
-
+		cout << getData(cur = sel.pop());
+		if (cur->right) sel.push(cur->right);
+		if (cur->left) sel.push(cur->left);
+		if (sel.size()) cout << "-> ";
+		else cout << endl;
 	}
 }
 
 void Tree::inOrder() {
-	using namespace std;
+	sel.clear();
+	sel.push(cur = root);
+	cout << "inOrder: ";
+	while (sel.size()) {
+		cout << getData(cur = sel.pop());
+		if (cur->right) sel.push(cur->right);
+		if (cur->left) sel.push(cur->left);
+		if (sel.size()) cout << "-> ";
+		else cout << endl;
+	}
 }
 
 void Tree::postOrder() {
-	using namespace std;
+	cout << "postOrder: ";
+}
+
+void Tree::levelOrder() {
+	cout << "levelOrder: ";
+	qel.clear();
+	qel.enqueue(cur = root);
+	while (qel.size()) {
+		cout << getData(cur = qel.dequeue());
+		if (cur->left) qel.enqueue(cur->left);
+		if (cur->right) qel.enqueue(cur->right);
+		if (qel.size()) cout << "-> ";
+		else cout << endl;
+	}
 }
 
 Tree::~Tree() {
 
 }
 
+
 int main() {
 	Tree tt;
 	for(int i = 1; i <= 15; i++)
 		tt.ent(i);
+	tt.preOrder();
+	tt.levelOrder();
 }

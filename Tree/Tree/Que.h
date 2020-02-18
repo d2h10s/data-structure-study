@@ -79,14 +79,14 @@ T Que<T>::dequeue() {
 
 template <class T>
 void Que<T>::clear() {
-	for (int i = 0; ncnt; i++)
-		dequeue();
+	while(ncnt) dequeue();
 }
 
 template <class T>
 int Que<T>::size() const{
 	return ncnt;
 }
+
 template <class T>
 void Que<T>::disp() {
 	if (ncnt < 1) {

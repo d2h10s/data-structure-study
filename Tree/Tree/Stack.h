@@ -74,8 +74,7 @@ T Stack<T>::pop() {
 
 template <class T>
 void Stack<T>::clear() {
-	for (int i = 0; ncnt; i++)
-		pop();
+	while(ncnt)	pop();
 }
 template <class T>
 int Stack<T>::size() const{
