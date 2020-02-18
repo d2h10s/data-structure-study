@@ -12,6 +12,8 @@ public:
 	void inOrder();
 	void postOrder();
 	void levelOrder();
+	void dispHeight();
+	void dispNodeCnt();
 
 	~Tree();
 private:
@@ -28,11 +30,11 @@ private:
 	node* cur;
 	Que<node*> qel;
 	Stack<node*> sel;
-	int ncnt;
+	int tcnt;
 	int getData(node* Node) const{ return cur->data; };
 };
 
-Tree::Tree() : cur(nullptr), root(nullptr), ncnt(0) {}
+Tree::Tree() : cur(nullptr), root(nullptr), tcnt(0) {}
 
 
 void Tree::traversal() {
@@ -74,7 +76,7 @@ void Tree::ent(int datum) {
 			}
 		}
 	}
-	ncnt++;
+	tcnt++;
 };
 
 void Tree::preOrder() {
@@ -86,7 +88,7 @@ void Tree::preOrder() {
 		if (cur->right) sel.push(cur->right);
 		if (cur->left) sel.push(cur->left);
 		if (sel.size()) cout << "-> ";
-		else cout << endl;
+		else cout << "\n\n";
 	}
 }
 
@@ -95,16 +97,28 @@ void Tree::inOrder() {
 	sel.push(cur = root);
 	cout << "inOrder: ";
 	while (sel.size()) {
+		while (cur->left) sel.push(cur = cur->left);
+		cout << getData(cur = sel.pop());
+		if (cur->right) sel.push(cur = cur->right);
+		if (sel.size()) cout << "-> ";
+		else cout << "\n\n";
+	}
+}
+
+void Tree::postOrder() { // ¹Ì¿Ï
+	sel.clear();
+	sel.push(cur = root);
+	cout << "postOrder: ";
+	while (1) {
 		cout << getData(cur = sel.pop());
 		if (cur->right) sel.push(cur->right);
 		if (cur->left) sel.push(cur->left);
 		if (sel.size()) cout << "-> ";
-		else cout << endl;
+		else {
+			cout << "\n\n";
+			break;
+		}
 	}
-}
-
-void Tree::postOrder() {
-	cout << "postOrder: ";
 }
 
 void Tree::levelOrder() {
@@ -116,12 +130,39 @@ void Tree::levelOrder() {
 		if (cur->left) qel.enqueue(cur->left);
 		if (cur->right) qel.enqueue(cur->right);
 		if (qel.size()) cout << "-> ";
-		else cout << endl;
+		else cout << "\n\n";
 	}
 }
 
-Tree::~Tree() {
+void Tree::dispHeight() {
+	int level = 0, MaxDepth = 0;
+	sel.clear();
+	sel.push(cur = root);
+	cout << "inOrder: ";
+	while (sel.size()) {
+		while (cur->left) {
+			sel.push(cur = cur->left);
+			level++;
+			MaxDepth = level > MaxDepth ? level : MaxDepth;
+		}
+		cur = sel.pop();
+		level--;
+		if (cur->right) {
+			sel.push(cur = cur->right);
+			level++;
+			MaxDepth = level > MaxDepth ? level : MaxDepth;
+		}
+	}
+	cout << "Tree Height is " << MaxDepth << "\n\n";
+}
 
+void Tree::dispNodeCnt() {
+	cout << "Tree has " << tcnt << " nodes\n\n";
+}
+
+Tree::~Tree() {
+	qel.clear();
+	sel.clear();
 }
 
 
@@ -130,5 +171,9 @@ int main() {
 	for(int i = 1; i <= 15; i++)
 		tt.ent(i);
 	tt.preOrder();
+	tt.inOrder();
+	tt.postOrder();
 	tt.levelOrder();
+	tt.dispNodeCnt();
+	tt.dispHeight();
 }
