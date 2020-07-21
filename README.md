@@ -8,7 +8,7 @@
 ## Linked List
 
 ### - Singly-Linked List
-_단일연결리스트 
+*단일연결리스트 
 
 ### - Doubly-Linked List
 
