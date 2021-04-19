@@ -38,6 +38,11 @@
 ### - Kruskal's Algorithm
 
 
+## Heap
+
+### - Max Heap
+
+### - Min Heap
 
 
 # ETC
