@@ -6,11 +6,9 @@ class list {
 
 public:
 	class node {
-	private:
-		friend list;
+	public:
 		int data;
 		node* next;
-	public:
 		node(int n = 0) : data(n), next(nullptr) {};
 		int getData() const {
 			return data;
